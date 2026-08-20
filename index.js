@@ -2,8 +2,8 @@
 const buttons = document.querySelectorAll("button");
 const display = document.querySelector("#display");
 let convertedNum;
-let num1 = null;
-let num2 = null;
+let num1 = [];
+let num2 = [];
 let operator;
 let result;
 
@@ -50,11 +50,12 @@ function clearAll(){
   operator = null;
 }
 
-function displayText(text){
-  if (text !== "AC" && text !== "C"){
-    return text;
+function displayText(n){
+  if (n === "AC" && n !== "C"){
+    return 0
   }
-  return 0;
+  
+  return Number(n.join(''));
 }
 
 
@@ -62,24 +63,30 @@ function displayText(text){
 buttons.forEach((button) =>{
   button.addEventListener("click", () =>{
     convertedNum = Number(button.textContent);
-    display.textContent = displayText(button.textContent);
-    if (num1 === null && !Number.isNaN(convertedNum)){
-      num1 = convertedNum;
-    }
-    else if (num2 === null && !Number.isNaN(convertedNum)){
-      num2 = convertedNum;
-    }
-    else if(["+", "-", "x", "÷"].includes(button.textContent)){
-      operator = button.textContent;
-    }
-    else if (button.textContent === "="){
-      result = operation(operator, num1, num2);
-      display.textContent = result;
-      result = 0;
-      num1 = null;
-      num2 = null;
-    }
-    else if(button.textContent === "C"){
+    if (!num1.length  || operator == null){
+          if (!["+", "-", "x", "÷"].includes(button.textContent)){
+            num1.push(button.textContent);
+            console.log(num1);
+            display.textContent = displayText(num1);
+          } else{
+            operator = button.textContent;
+            console.log(operator);
+            display.textContent = operator;
+
+          }
+    } else if (operator !== null || num2.length === 0){
+      if (button.textContent !== "="){
+        num2.push(button.textContent);
+        console.log(num2);
+        display.textContent = displayText(num2);
+      } else{
+        result = operation(operator, Number(num1.join('')), Number(num2.join('')));
+        display.textContent = result;
+        result = 0;
+        num1 = null;
+        num2 = null;
+      }
+    }else if(button.textContent === "C"){
       if (num2 !== null){
         num2 = clearPrevious(num2);
       } else{
